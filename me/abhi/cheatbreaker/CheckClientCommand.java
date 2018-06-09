@@ -2,22 +2,17 @@ package me.abhi.cheatbreaker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
-public class CheckClientCommand extends BukkitCommand {
-
-    public CheckClientCommand() {
-        super("checkclient");
-        this.setPermission("cheatbreakerapi.command.checkclient");
-        this.setPermissionMessage(API.noPermissionMessage);
-    }
+public class CheckClientCommand implements CommandExecutor {
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!sender.hasPermission(this.getPermission())) {
-            sender.sendMessage(this.getPermissionMessage());
+    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+        if (!sender.hasPermission("cheatbreakerapi.command.checkclient")) {
+            sender.sendMessage(API.noPermissionMessage);
             return true;
         }
         if (args.length != 1) {

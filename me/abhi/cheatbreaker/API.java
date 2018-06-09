@@ -1,8 +1,13 @@
 package me.abhi.cheatbreaker;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.StructureModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -52,8 +57,33 @@ public class API extends JavaPlugin {
     }
 
     private void register() {
-        Bukkit.getMessenger().registerIncomingPluginChannel(this, "MC|Brand", new PlayerListener());
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
-        ((CraftServer) getServer()).getCommandMap().register("checkclient", new CheckClientCommand());
+        getCommand("checkclient").setExecutor(new CheckClientCommand());
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this, PacketType.Play.Client.CUSTOM_PAYLOAD) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                PacketContainer packet = event.getPacket();
+                Player player = event.getPlayer();
+                StructureModifier<String> clientTypes = packet.getStrings();
+                boolean cheatbreaker = false;
+                for (String string : clientTypes.getValues()) {
+                    if (string.equals("CB|INIT") || string.equals("CB-Binary")) {
+                        cheatbreaker = true;
+                        cheatbreakerUsers.add(player.getUniqueId());
+                    }
+                    if (cheatbreaker) {
+                        player.sendMessage(welcomeMessage);
+                    } else {
+                        if (!cheatbreakerUsers.contains(player.getUniqueId())) {
+                            if (kick) {
+                                player.kickPlayer(kickMessage);
+                            } else {
+                                player.sendMessage(recommendationMessage);
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 }
