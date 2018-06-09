@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 public class API extends JavaPlugin {
 
+    private API instance;
     public static boolean kick;
     public static String serverRestartMessage;
     public static String recommendationMessage;
@@ -30,6 +32,7 @@ public class API extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         load();
         cheatbreakerUsers = new ArrayList<>();
         register();
@@ -76,7 +79,12 @@ public class API extends JavaPlugin {
                     } else {
                         if (!cheatbreakerUsers.contains(player.getUniqueId())) {
                             if (kick) {
-                                player.kickPlayer(kickMessage);
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        player.kickPlayer(kickMessage);
+                                    }
+                                }.runTaskLater(instance, 5L);
                             } else {
                                 player.sendMessage(recommendationMessage);
                             }
