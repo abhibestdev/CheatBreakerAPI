@@ -1,6 +1,6 @@
 name: CheatBreakerAPI
 author: abhi
-version: 0.4
+version: 0.6
 main: me.abhi.cheatbreaker.API
 depend: [ProtocolLib]
 commands:

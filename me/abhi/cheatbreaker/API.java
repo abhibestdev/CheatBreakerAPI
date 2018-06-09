@@ -20,6 +20,7 @@ public class API extends JavaPlugin {
 
     private API instance;
     public static boolean kick;
+    public static int kickDelay;
     public static String serverRestartMessage;
     public static String recommendationMessage;
     public static String kickMessage;
@@ -49,6 +50,7 @@ public class API extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
         kick = getConfig().getBoolean("kick");
+        kickDelay = getConfig().getInt("kick-delay");
         serverRestartMessage = ChatColor.translateAlternateColorCodes('&', getConfig().getString("server-restart"));
         recommendationMessage = ChatColor.translateAlternateColorCodes('&', getConfig().getString("recommendation-message"));
         kickMessage = ChatColor.translateAlternateColorCodes('&', getConfig().getString("kick-message"));
@@ -72,19 +74,19 @@ public class API extends JavaPlugin {
                 for (String string : clientTypes.getValues()) {
                     if (string.equals("CB|INIT") || string.equals("CB-Binary")) {
                         cheatbreaker = true;
-                        cheatbreakerUsers.add(player.getUniqueId());
                     }
-                    if (cheatbreaker) {
-                        player.sendMessage(welcomeMessage);
-                    } else {
-                        if (!cheatbreakerUsers.contains(player.getUniqueId())) {
+                    if (!cheatbreakerUsers.contains(player.getUniqueId())) {
+                        if (cheatbreaker) {
+                            player.sendMessage(welcomeMessage);
+                            cheatbreakerUsers.add(player.getUniqueId());
+                        } else {
                             if (kick) {
                                 new BukkitRunnable() {
                                     @Override
                                     public void run() {
                                         player.kickPlayer(kickMessage);
                                     }
-                                }.runTaskLater(instance, 5L);
+                                }.runTaskLater(instance, kickDelay);
                             } else {
                                 player.sendMessage(recommendationMessage);
                             }

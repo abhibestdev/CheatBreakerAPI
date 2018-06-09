@@ -1,6 +1,9 @@
 #If a player does not join with CheatBreaker, kick them?
 kick: true
 
+#Kick Player after x many ticks // 20 ticks = 1 second
+kick-delay: 20
+
 #Messages
 server-restart: "Everyone has been kicked for re-authentication."
 recommendation-message: "&fUsing &c&lCheat&f&lBreaker &fis highly recommended. You may download the client at &chttps://cheatbreaker.com&f."
