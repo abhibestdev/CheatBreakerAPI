@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class API extends JavaPlugin implements PluginMessageListener{
+public class API extends JavaPlugin implements PluginMessageListener {
 
     private API instance;
     public static boolean kick;
@@ -60,13 +60,13 @@ public class API extends JavaPlugin implements PluginMessageListener{
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         getCommand("checkclient").setExecutor(new CheckClientCommand());
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "CB|INIT", this);
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "CB-Binary", this);        
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "CB-Binary", this);
     }
 
-	@Override
-	public void onPluginMessageReceived(String channel, Player player, byte[] arg2) {
-		boolean cheatbreaker = false;
-		if (channel.equals("CB|INIT") || channel.equals("CB-Binary")) {
+    @Override
+    public void onPluginMessageReceived(String channel, Player player, byte[] arg2) {
+        boolean cheatbreaker = false;
+        if (channel.equals("CB|INIT") || channel.equals("CB-Binary")) {
             cheatbreaker = true;
         }
         if (!cheatbreakerUsers.contains(player.getUniqueId())) {
@@ -86,5 +86,5 @@ public class API extends JavaPlugin implements PluginMessageListener{
                 }
             }
         }
-	}
+    }
 }
