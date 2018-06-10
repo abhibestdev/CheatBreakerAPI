@@ -1,6 +1,6 @@
 name: CheatBreakerAPI
 author: abhi
-version: 0.7
-main: me.abhi.cheatbreaker.API
+version: 0.8
+main: bukkit.me.abhi.cheatbreaker.API
 commands:
  checkclient:
