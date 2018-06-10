@@ -1,22 +1,17 @@
 package me.abhi.cheatbreaker;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.reflect.StructureModifier;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class API extends JavaPlugin {
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.scheduler.BukkitRunnable;
+
+public class API extends JavaPlugin implements PluginMessageListener{
 
     private API instance;
     public static boolean kick;
@@ -64,36 +59,32 @@ public class API extends JavaPlugin {
     private void register() {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         getCommand("checkclient").setExecutor(new CheckClientCommand());
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this, PacketType.Play.Client.CUSTOM_PAYLOAD) {
-            @Override
-            public void onPacketReceiving(PacketEvent event) {
-                PacketContainer packet = event.getPacket();
-                Player player = event.getPlayer();
-                StructureModifier<String> clientTypes = packet.getStrings();
-                boolean cheatbreaker = false;
-                for (String string : clientTypes.getValues()) {
-                    if (string.equals("CB|INIT") || string.equals("CB-Binary")) {
-                        cheatbreaker = true;
-                    }
-                    if (!cheatbreakerUsers.contains(player.getUniqueId())) {
-                        if (cheatbreaker) {
-                            player.sendMessage(welcomeMessage);
-                            cheatbreakerUsers.add(player.getUniqueId());
-                        } else {
-                            if (kick) {
-                                new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                        player.kickPlayer(kickMessage);
-                                    }
-                                }.runTaskLater(instance, kickDelay);
-                            } else {
-                                player.sendMessage(recommendationMessage);
-                            }
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "CB|INIT", this);
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "CB-Binary", this);        
+    }
+
+	@Override
+	public void onPluginMessageReceived(String channel, Player player, byte[] arg2) {
+		boolean cheatbreaker = false;
+		if (channel.equals("CB|INIT") || channel.equals("CB-Binary")) {
+            cheatbreaker = true;
+        }
+        if (!cheatbreakerUsers.contains(player.getUniqueId())) {
+            if (cheatbreaker) {
+                player.sendMessage(welcomeMessage);
+                cheatbreakerUsers.add(player.getUniqueId());
+            } else {
+                if (kick) {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            player.kickPlayer(kickMessage);
                         }
-                    }
+                    }.runTaskLater(instance, kickDelay);
+                } else {
+                    player.sendMessage(recommendationMessage);
                 }
             }
-        });
-    }
+        }
+	}
 }
