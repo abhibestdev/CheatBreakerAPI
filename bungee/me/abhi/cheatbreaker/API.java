@@ -56,7 +56,7 @@ public class API extends Plugin implements Listener{
     }
 
     private void load() throws IOException {    	
-    	if(this.getDataFolder().exists())
+    	if(!this.getDataFolder().exists())
     		this.getDataFolder().mkdir();
     	
     	File f = new File(getDataFolder(), "config.yml");
