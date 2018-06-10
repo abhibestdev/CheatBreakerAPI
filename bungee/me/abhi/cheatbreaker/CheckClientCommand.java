@@ -1,8 +1,5 @@
 package bungee.me.abhi.cheatbreaker;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
